@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import top.qjyoung.encrypt.advice.EncryptRequestBodyAdvice;
+import top.qjyoung.encrypt.advice.DecryptRequestBodyAdvice;
 import top.qjyoung.encrypt.advice.EncryptResponseBodyAdvice;
 
 /**
@@ -33,8 +33,8 @@ public class EncryptAutoConfiguration {
      * @return
      */
     @Bean
-    public EncryptRequestBodyAdvice encryptRequestBodyAdvice() {
-        return new EncryptRequestBodyAdvice();
+    public DecryptRequestBodyAdvice encryptRequestBodyAdvice() {
+        return new DecryptRequestBodyAdvice();
     }
     
 }

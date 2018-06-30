@@ -5,10 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import top.qjyoung.encrypt.auto.EncryptProperties;
-import top.qjyoung.encrypt.util.AesEncryptUtils;
-import top.qjyoung.encrypt.util.JsonUtils;
-import top.qjyoung.encrypt.util.KeyContainer;
-import top.qjyoung.encrypt.util.R;
+import top.qjyoung.encrypt.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +61,7 @@ public class SignAuthFilter implements Filter {
                 print.write(JsonUtils.toJson(R.error("非法请求:已过期")));
                 return;
             }
-            String decryptBody = AesEncryptUtils.aesDecrypt(sign, decryptKey);
+            String decryptBody = AESUtil.decrypt(sign, decryptKey);
             Map<String, Object> signInfo = JsonUtils.getMapper().readValue(decryptBody, Map.class);
             Long signTime = (Long) signInfo.get("signTime");
             

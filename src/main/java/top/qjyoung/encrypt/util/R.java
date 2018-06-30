@@ -69,4 +69,12 @@ public class R extends HashMap<String, Object> {
         super.put(key, value);
         return this;
     }
+    
+    public Object getMsg() {
+        return this.get("msg");
+    }
+    
+    public Object getCode() {
+        return this.get("code");
+    }
 }
