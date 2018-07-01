@@ -2,12 +2,8 @@ package top.qjyoung.encrypt.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.StringWriter;
-
 /**
  * Json 工具类
- *
- * @author yinjihuan
  */
 public class JsonUtils {
     private static ObjectMapper mapper = new ObjectMapper();

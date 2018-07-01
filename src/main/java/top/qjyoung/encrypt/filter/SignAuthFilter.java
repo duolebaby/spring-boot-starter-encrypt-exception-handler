@@ -43,22 +43,22 @@ public class SignAuthFilter implements Filter {
         
         /*存储aes 密钥的对应key值*/
         String uuid = req.getHeader("uuid");
-        if (!StringUtils.isEmpty(uuid.trim())) {
+        if (!StringUtils.isEmpty(uuid)) {
             PrintWriter print = resp.getWriter();
-            print.write(JsonUtils.toJson(R.error("非法请求:缺少uuid")));
+            print.write(JsonUtils.toJson(R.error(ResultEnum.UUID_HEADER_MISS)));
             return;
         }
         String sign = req.getHeader("sign");
-        if (!StringUtils.isEmpty(sign.trim())) {
+        if (!StringUtils.isEmpty(sign)) {
             PrintWriter print = resp.getWriter();
-            print.write(JsonUtils.toJson(R.error("非法请求:缺少签名信息")));
+            print.write(JsonUtils.toJson(R.error(ResultEnum.SIGN_MISS)));
             return;
         }
         try {
             String decryptKey = KeyContainer.AES_KEY_MAP.get(uuid);
             if (decryptKey == null) {
                 PrintWriter print = resp.getWriter();
-                print.write(JsonUtils.toJson(R.error("非法请求:已过期")));
+                print.write(JsonUtils.toJson(R.error(ResultEnum.KEY_EXPIRED)));
                 return;
             }
             String decryptBody = AESUtil.decrypt(sign, decryptKey);
@@ -68,7 +68,7 @@ public class SignAuthFilter implements Filter {
             // 签名时间和服务器时间相差10分钟以上则认为是过期请求，此时间可以配置
             if ((System.currentTimeMillis() - signTime) > encryptProperties.getSignExpireTime() * 60000) {
                 PrintWriter print = resp.getWriter();
-                print.write(JsonUtils.toJson(R.error("非法请求:已过期")));
+                print.write(JsonUtils.toJson(R.error(ResultEnum.REQUEST_EXPIRED)));
                 return;
             }
             
@@ -82,7 +82,7 @@ public class SignAuthFilter implements Filter {
                         String reqValue = req.getParameter(key).toString();
                         if (!signValue.equals(reqValue)) {
                             PrintWriter print = resp.getWriter();
-                            print.write(JsonUtils.toJson(R.error("非法请求:参数被篡改")));
+                            print.write(JsonUtils.toJson(R.error(ResultEnum.DIRTY_REQUEST)));
                             return;
                         }
                     }

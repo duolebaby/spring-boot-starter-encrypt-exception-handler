@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import top.qjyoung.encrypt.anno.Encrypt;
 import top.qjyoung.encrypt.auto.EncryptProperties;
-import top.qjyoung.encrypt.util.AESUtil;
 import top.qjyoung.encrypt.exception.AppException;
+import top.qjyoung.encrypt.util.AESUtil;
 import top.qjyoung.encrypt.util.KeyContainer;
-import top.qjyoung.encrypt.util.R;
+import top.qjyoung.encrypt.util.ResultEnum;
 
 import java.util.List;
 
@@ -59,12 +59,12 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (returnType.getMethod().isAnnotationPresent(Encrypt.class) && !encryptProperties.isDebug()) {
             List<String> uuid = request.getHeaders().get("uuid");
             if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
-                throw new AppException(R.error("uuid错误"));
+                throw new AppException(ResultEnum.UUID_HEADER_MISS);
             }
             //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)
             String aesKey = KeyContainer.AES_KEY_MAP.get(uuid.get(0));
             if (aesKey == null) {
-                throw new AppException(R.error("密钥不存在或者已过期"));
+                throw new AppException(ResultEnum.KEY_EXPIRED);
             }
             try {
                 String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
@@ -74,7 +74,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                 return result;
             } catch (Exception e) {
                 logger.error("加密数据异常", e);
-                throw new AppException(R.error("加密数据异常"));
+                throw new AppException(ResultEnum.ENCRYPT_FAILED);
             }
         }
         return body;
