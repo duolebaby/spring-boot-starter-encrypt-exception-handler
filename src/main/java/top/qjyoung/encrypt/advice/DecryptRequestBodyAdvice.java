@@ -58,7 +58,7 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
             throw new AppException(R.error("uuid错误"));
         }
         //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)
-        String aesKey = KeyContainer.AES_KEY_MAP.get(uuid);
+        String aesKey = KeyContainer.AES_KEY_MAP.get(uuid.get(0));
         if (aesKey == null) {
             throw new AppException(R.error("密钥不存在或者已过期"));
         }

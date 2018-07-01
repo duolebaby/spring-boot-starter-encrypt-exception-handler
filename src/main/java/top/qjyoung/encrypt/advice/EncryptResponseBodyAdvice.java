@@ -57,16 +57,16 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         }
         long startTime = System.currentTimeMillis();
         if (returnType.getMethod().isAnnotationPresent(Encrypt.class) && !encryptProperties.isDebug()) {
+            List<String> uuid = request.getHeaders().get("uuid");
+            if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
+                throw new AppException(R.error("uuid错误"));
+            }
+            //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)
+            String aesKey = KeyContainer.AES_KEY_MAP.get(uuid.get(0));
+            if (aesKey == null) {
+                throw new AppException(R.error("密钥不存在或者已过期"));
+            }
             try {
-                List<String> uuid = request.getHeaders().get("uuid");
-                if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
-                    throw new AppException(R.error("uuid错误"));
-                }
-                //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)
-                String aesKey = KeyContainer.AES_KEY_MAP.get(uuid);
-                if (aesKey == null) {
-                    throw new AppException(R.error("密钥不存在或者已过期"));
-                }
                 String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
                 String result = AESUtil.encrypt(content, aesKey);
                 long endTime = System.currentTimeMillis();
