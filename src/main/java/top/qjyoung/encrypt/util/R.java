@@ -7,14 +7,14 @@ public class R extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
     
     public R() {
-        put("code", 1);
-        put("msg", "success");
+        put("code", ResultEnum.SUCCESS.getCode());
+        put("msg", ResultEnum.SUCCESS.getMessage());
     }
     
     public static R error() {
         R r = new R();
-        r.put("code", 1);
-        r.put("msg", "error");
+        r.put("code", ResultEnum.ERROR.getCode());
+        r.put("msg", ResultEnum.ERROR.getMessage());
         return r;
     }
     

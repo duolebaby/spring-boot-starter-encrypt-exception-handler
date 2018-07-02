@@ -49,17 +49,17 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
                                            Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
-        List<String> uuid = inputMessage.getHeaders().get("uuid");
-        if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
-            throw new AppException(ResultEnum.UUID_HEADER_MISS);
-        }
-        //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)
-        String aesKey = KeyContainer.AES_KEY_MAP.get(uuid.get(0));
-        if (aesKey == null) {
-            throw new AppException(ResultEnum.KEY_EXPIRED);
-        }
         //对于加了Decrpt注解的请求进行解密
         if (parameter.getMethod().isAnnotationPresent(Decrypt.class) && !encryptProperties.isDebug()) {
+            List<String> uuid = inputMessage.getHeaders().get("uuid");
+            if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
+                throw new AppException(ResultEnum.UUID_HEADER_MISS);
+            }
+            //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)
+            String aesKey = KeyContainer.AES_KEY_MAP.get(uuid.get(0));
+            if (aesKey == null) {
+                throw new AppException(ResultEnum.KEY_EXPIRED);
+            }
             try {
                 return new DecryptHttpInputMessage(inputMessage, aesKey, encryptProperties.getCharset());
             } catch (Exception e) {
