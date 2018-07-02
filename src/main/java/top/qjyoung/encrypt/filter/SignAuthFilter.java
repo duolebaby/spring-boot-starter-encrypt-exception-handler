@@ -43,13 +43,13 @@ public class SignAuthFilter implements Filter {
         
         /*存储aes 密钥的对应key值*/
         String uuid = req.getHeader("uuid");
-        if (!StringUtils.isEmpty(uuid)) {
+        if (StringUtils.isEmpty(uuid)) {
             PrintWriter print = resp.getWriter();
             print.write(JsonUtils.toJson(R.error(ResultEnum.UUID_HEADER_MISS)));
             return;
         }
         String sign = req.getHeader("sign");
-        if (!StringUtils.isEmpty(sign)) {
+        if (StringUtils.isEmpty(sign)) {
             PrintWriter print = resp.getWriter();
             print.write(JsonUtils.toJson(R.error(ResultEnum.SIGN_MISS)));
             return;
