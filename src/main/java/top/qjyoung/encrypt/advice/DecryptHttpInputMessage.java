@@ -21,10 +21,8 @@ class DecryptHttpInputMessage implements HttpInputMessage {
     public DecryptHttpInputMessage(HttpInputMessage inputMessage, String key, String charset) throws Exception {
         this.headers = inputMessage.getHeaders();
         String content = IOUtils.toString(inputMessage.getBody(), charset);
-        long startTime = System.currentTimeMillis();
         String decryptBody = AESUtil.decrypt(content, key);
-        long endTime = System.currentTimeMillis();
-        logger.debug("Decrypt Time:" + (endTime - startTime));
+        logger.debug("body after decrypt: " + decryptBody);
         this.body = IOUtils.toInputStream(decryptBody, charset);
     }
     

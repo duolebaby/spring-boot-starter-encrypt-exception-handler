@@ -55,7 +55,6 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             encryptLocal.remove();
             return body;
         }
-        long startTime = System.currentTimeMillis();
         if (returnType.getMethod().isAnnotationPresent(Encrypt.class) && !encryptProperties.isDebug()) {
             List<String> uuid = request.getHeaders().get("uuid");
             if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
@@ -68,9 +67,9 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             }
             try {
                 String content = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+                logger.debug("body before encrypt: " + content);
                 String result = AESUtil.encrypt(content, aesKey);
-                long endTime = System.currentTimeMillis();
-                logger.debug("Encrypt Time:" + (endTime - startTime));
+                response.getHeaders().add("encrypted", "true");
                 return result;
             } catch (Exception e) {
                 logger.error("加密数据异常", e);
