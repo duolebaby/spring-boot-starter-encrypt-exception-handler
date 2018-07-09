@@ -22,7 +22,7 @@ public class AESUtil {
     }
     
     public static String generateKey() {
-        String key = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16);
+        String key = StringUtils.getUUID().substring(0, 16);
         return key;
     }
     
@@ -35,14 +35,9 @@ public class AESUtil {
      * @throws Exception
      */
     public static String encrypt(String data, String key) throws Exception {
-        try {
-            Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"));
-            return Base64Util.encode(cipher.doFinal(data.getBytes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"));
+        return Base64Util.encode(cipher.doFinal(data.getBytes()));
     }
     
     /**
@@ -54,14 +49,9 @@ public class AESUtil {
      * @throws Exception
      */
     public static String decrypt(String data, String key) throws Exception {
-        try {
-            Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"));
-            byte[] result = cipher.doFinal(Base64Util.decode(data));
-            return new String(result, "utf-8");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key.getBytes(), "AES"));
+        byte[] result = cipher.doFinal(Base64Util.decode(data));
+        return new String(result, "utf-8");
     }
 }

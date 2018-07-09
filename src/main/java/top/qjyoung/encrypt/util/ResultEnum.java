@@ -6,7 +6,7 @@ public enum ResultEnum implements BaseResultEnum {
     
     ERROR(1, "error"),
     
-    PARAM_ERROR(2, "参数不正确"),
+    PARAM_ERROR(2, "参数错误(缺少必要参数)"),
     
     DUPLICATE_KEY(3, "数据库中已存在该记录"),
     
@@ -32,6 +32,12 @@ public enum ResultEnum implements BaseResultEnum {
     
     DIRTY_REQUEST(14, "非法请求:参数被篡改"),
     
+    SIGN_ERROR(15, "非法请求:签名验证失败"),
+    
+    REQUEST_EXPIRED_TIME_MISSS(16, "请求签名过期时间未配置"),
+    
+    SIGN_TIME_MISS(17, "签名时间缺失"),
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SERVER_ERROR(500, "服务器内部错误"),
     
@@ -39,7 +45,7 @@ public enum ResultEnum implements BaseResultEnum {
     
     NO_AUTHORIZATION(403, "没有访问权限，请联系管理员"),
     
-    METHOD_NOT_ALLOWED(405, "请求方法错误"),;
+    METHOD_NOT_ALLOWED(405, "请求方法错误");
     
     private Integer code;
     

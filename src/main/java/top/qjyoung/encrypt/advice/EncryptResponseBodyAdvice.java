@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import top.qjyoung.encrypt.anno.Encrypt;
@@ -18,6 +17,7 @@ import top.qjyoung.encrypt.exception.AppException;
 import top.qjyoung.encrypt.util.AESUtil;
 import top.qjyoung.encrypt.util.KeyContainer;
 import top.qjyoung.encrypt.util.ResultEnum;
+import top.qjyoung.encrypt.util.StringUtils;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         }
         if (returnType.getMethod().isAnnotationPresent(Encrypt.class) && !encryptProperties.isDebug()) {
             List<String> uuid = request.getHeaders().get("uuid");
-            if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
+            if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0))) {
                 throw new AppException(ResultEnum.UUID_HEADER_MISS);
             }
             //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)

@@ -1,8 +1,9 @@
 package top.qjyoung.encrypt.filter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import top.qjyoung.encrypt.auto.EncryptProperties;
 import top.qjyoung.encrypt.util.*;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class SignAuthFilter implements Filter {
     
     private EncryptProperties encryptProperties;
+    private Logger logger = LoggerFactory.getLogger(SignAuthFilter.class);
     
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -64,9 +66,19 @@ public class SignAuthFilter implements Filter {
             String decryptBody = AESUtil.decrypt(sign, decryptKey);
             Map<String, Object> signInfo = JsonUtils.getMapper().readValue(decryptBody, Map.class);
             Long signTime = (Long) signInfo.get("signTime");
-            
-            // 签名时间和服务器时间相差10分钟以上则认为是过期请求，此时间可以配置
-            if ((System.currentTimeMillis() - signTime) > encryptProperties.getSignExpireTime() * 60000) {
+            if (signTime == null) {
+                PrintWriter print = resp.getWriter();
+                print.write(JsonUtils.toJson(R.error(ResultEnum.SIGN_TIME_MISS)));
+                return;
+            }
+            // 签名时间和服务器时间默认相差10分钟以上则认为是过期请求，此时间可以配置
+            Long signExpireTime = encryptProperties.getSignExpireTime();
+            if (signExpireTime == null) {
+                PrintWriter print = resp.getWriter();
+                print.write(JsonUtils.toJson(R.error(ResultEnum.REQUEST_EXPIRED_TIME_MISSS)));
+                return;
+            }
+            if ((System.currentTimeMillis() - signTime) > signExpireTime * 60000) {
                 PrintWriter print = resp.getWriter();
                 print.write(JsonUtils.toJson(R.error(ResultEnum.REQUEST_EXPIRED)));
                 return;
@@ -90,7 +102,8 @@ public class SignAuthFilter implements Filter {
             }
         } catch (Exception e) {
             PrintWriter print = resp.getWriter();
-            print.write(JsonUtils.toJson(R.error("非法请求:" + e.getMessage())));
+            logger.error("非法请求:签名验证失败", e);
+            print.write(JsonUtils.toJson(R.error(ResultEnum.SIGN_ERROR)));
             return;
         }
         chain.doFilter(request, response);

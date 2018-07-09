@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice;
 import top.qjyoung.encrypt.anno.Decrypt;
@@ -14,6 +13,7 @@ import top.qjyoung.encrypt.auto.EncryptProperties;
 import top.qjyoung.encrypt.exception.AppException;
 import top.qjyoung.encrypt.util.KeyContainer;
 import top.qjyoung.encrypt.util.ResultEnum;
+import top.qjyoung.encrypt.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -52,7 +52,7 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
         //对于加了Decrpt注解的请求进行解密
         if (parameter.getMethod().isAnnotationPresent(Decrypt.class) && !encryptProperties.isDebug()) {
             List<String> uuid = inputMessage.getHeaders().get("uuid");
-            if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0).trim())) {
+            if (uuid == null || uuid.size() == 0 || StringUtils.isEmpty(uuid.get(0))) {
                 throw new AppException(ResultEnum.UUID_HEADER_MISS);
             }
             //推荐从redis缓存获取aesKey，并设置过期时间，这里只是模拟(存在静态map对象中)

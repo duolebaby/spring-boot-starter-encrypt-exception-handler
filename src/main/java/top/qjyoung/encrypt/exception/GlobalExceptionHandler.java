@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.util.StringUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +14,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import top.qjyoung.encrypt.auto.ErrorPageProperties;
 import top.qjyoung.encrypt.util.R;
 import top.qjyoung.encrypt.util.ResultEnum;
+import top.qjyoung.encrypt.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
