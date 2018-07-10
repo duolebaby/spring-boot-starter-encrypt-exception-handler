@@ -61,6 +61,7 @@ public class GlobalExceptionHandler {
         }
         String page_500 = errorPageProperties.getPage_500();
         if (StringUtils.isEmpty(page_500)) {
+            logger.error("500 页面未配置");
             return R.error(ResultEnum.PAGE_500_MISS);
         }
         return new ModelAndView(page_500);
@@ -107,9 +108,10 @@ public class GlobalExceptionHandler {
         }
         String page_403 = errorPageProperties.getPage_403();
         if (StringUtils.isEmpty(page_403)) {
+            logger.error("403 页面未配置");
             return R.error(ResultEnum.PAGE_403_MISS);
         }
-        return new ModelAndView("error/403");
+        return new ModelAndView(page_403);
     }
     
     /**
